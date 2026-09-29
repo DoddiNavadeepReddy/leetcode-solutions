@@ -1,39 +1,86 @@
+#include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
-    int data[30000];
-    int min[30000];
+typedef struct
+{
+    int data[10000];
+    int minData[10000];
     int top;
 } MinStack;
 
-MinStack* minStackCreate() {
-    MinStack* obj = (MinStack*)malloc(sizeof(MinStack));
-    obj->top = -1;
-    return obj;
+MinStack* minStackCreate()
+{
+    MinStack* stack = malloc(sizeof(MinStack));
+
+    stack->top = -1;
+
+    return stack;
 }
 
-void minStackPush(MinStack* obj, int val) {
+void minStackPush(MinStack* obj, int val)
+{
     obj->top++;
+
     obj->data[obj->top] = val;
-    if (obj->top == 0 || val < obj->min[obj->top - 1]) {
-        obj->min[obj->top] = val;
-    } else {
-        obj->min[obj->top] = obj->min[obj->top - 1];
+
+    if (obj->top == 0)
+    {
+        obj->minData[obj->top] = val;
+    }
+    else
+    {
+        if (val < obj->minData[obj->top - 1])
+        {
+            obj->minData[obj->top] = val;
+        }
+        else
+        {
+            obj->minData[obj->top] = obj->minData[obj->top - 1];
+        }
     }
 }
 
-void minStackPop(MinStack* obj) {
-    if (obj->top >= 0) obj->top--;
+void minStackPop(MinStack* obj)
+{
+    obj->top--;
 }
 
-int minStackTop(MinStack* obj) {
+int minStackTop(MinStack* obj)
+{
     return obj->data[obj->top];
 }
 
-int minStackGetMin(MinStack* obj) {
-    return obj->min[obj->top];
+int minStackGetMin(MinStack* obj)
+{
+    return obj->minData[obj->top];
 }
 
-void minStackFree(MinStack* obj) {
+void minStackFree(MinStack* obj)
+{
     free(obj);
 }
+
+#ifdef LOCAL_TEST
+
+int main()
+{
+    MinStack* stack = minStackCreate();
+
+    minStackPush(stack, -2);
+    minStackPush(stack, 0);
+    minStackPush(stack, -3);
+
+    printf("Minimum: %d\n", minStackGetMin(stack));
+
+    minStackPop(stack);
+
+    printf("Top: %d\n", minStackTop(stack));
+
+    printf("Minimum: %d\n", minStackGetMin(stack));
+
+    minStackFree(stack);
+
+    return 0;
+}
+
+#endif
